@@ -1,0 +1,33 @@
+from sqlalchemy.orm import Session
+from app.models.models import User, Section
+from app.schemas.schemas import UserCreate
+
+def get_user(db: Session, user_id: int):
+    return db.query(User).filter(User.id == user_id).first()
+
+def get_user_by_email(db: Session, email: str):
+    return db.query(User).filter(User.email == email).first()
+
+def get_user_by_google_id(db: Session, google_id: str):
+    return db.query(User).filter(User.google_id == google_id).first()
+
+def create_user(db: Session, user: UserCreate):
+    db_user = User(
+        email=user.email,
+        name=user.name,
+        google_id=user.google_id
+    )
+    db.add(db_user)
+    db.commit()
+    db.refresh(db_user)
+    
+    # Create default "Uncategorized" section
+    uncategorized = Section(
+        name="Uncategorized",
+        order=999,  # Put at bottom
+        user_id=db_user.id
+    )
+    db.add(uncategorized)
+    db.commit()
+    
+    return db_user
