@@ -1,20 +1,23 @@
+# Under Construction
+This project is a work in progress. Expect breaking changes and rough edges.
+
 # 🔗 LinkVault
 
 **Your personal hub for organizing and sharing important links**
 
 LinkVault is a modern, intuitive web application that helps you organize, manage, and access your important links in one centralized location. Say goodbye to scattered bookmarks and hello to a beautifully organized link management system.
 
-## ✨ Features
+## Features
 
 ### Current Features
-- 🔐 **Google OAuth Authentication** - Secure login with your Google account
-- 📂 **Organized Sections** - Create custom sections to categorize your links
-- 📌 **Pin Important Links** - Pin frequently used links for quick access
-- 🎯 **Quick Actions** - One-click pin, copy, edit, and external link access
-- 🔄 **Drag & Drop Reordering** - Easily reorder sections with intuitive drag & drop
-- ✏️ **Inline Editing** - Edit links and sections without complex modals
-- 📱 **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
-- 🎨 **Modern UI** - Beautiful, gradient-enhanced interface with smooth animations
+- **Google OAuth Authentication** - Secure login with your Google account
+- **Organized Sections** - Create custom sections to categorize your links
+- **Pin Important Links** - Pin frequently used links for quick access
+- **Quick Actions** - One-click pin, copy, edit, and external link access
+- **Drag & Drop Reordering** - Easily reorder sections with intuitive drag & drop
+- **Inline Editing** - Edit links and sections without complex modals
+- **Responsive Design** - Works seamlessly on desktop, tablet, and mobile
+- **Modern UI** - Beautiful, gradient-enhanced interface with smooth animations
 
 ### Enhanced User Experience
 - **Always-visible controls** - Pin and action buttons visible on every card
@@ -23,25 +26,25 @@ LinkVault is a modern, intuitive web application that helps you organize, manage
 - **Quick copy-to-clipboard** - Share links instantly with one click
 - **Enhanced pinned section** - Special styling for your most important links
 
-## 🚀 Upcoming Features
+## Upcoming Features
 
 ### Collaboration & Sharing
-- 👥 **Share Sections** - Share entire sections with other users
-- 🔗 **Public Link Collections** - Create public, shareable link collections
-- 👨‍💼 **Team Workspaces** - Collaborate on link collections with your team
-- 💬 **Comments & Notes** - Add collaborative notes to shared links
+- **Share Sections** - Share entire sections with other users
+- **Public Link Collections** - Create public, shareable link collections
+- **Team Workspaces** - Collaborate on link collections with your team
+- **Comments & Notes** - Add collaborative notes to shared links
 
 ### Advanced Organization
-- 🏷️ **Tags & Labels** - Tag links for better categorization
-- 🔍 **Advanced Search** - Find links quickly with full-text search
-- 📊 **Usage Analytics** - Track which links you use most
-- 🗂️ **Nested Folders** - Create hierarchical folder structures
+- **Tags & Labels** - Tag links for better categorization
+- **Advanced Search** - Find links quickly with full-text search
+- **Usage Analytics** - Track which links you use most
+- **Nested Folders** - Create hierarchical folder structures
 
 ### Productivity Features
-- 🌐 **Link Previews** - Automatic website previews and metadata
-- 📱 **Mobile App** - Native iOS and Android applications
-- 🔔 **Link Monitoring** - Get notified when links go offline
-- 📤 **Bulk Import/Export** - Import from browsers, export to various formats
+- **Link Previews** - Automatic website previews and metadata
+- **Mobile App** - Native iOS and Android applications
+- **Link Monitoring** - Get notified when links go offline
+- **Bulk Import/Export** - Import from browsers, export to various formats
 - 🤖 **AI Categorization** - Automatic link categorization using AI
 
 ### Integration & Automation
