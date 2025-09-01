@@ -1,29 +1,37 @@
-import { Link2 } from 'lucide-react'
+"use client"
+
+import { Link2 } from "lucide-react"
 
 function Login() {
   const handleGoogleLogin = () => {
-    window.location.href = '/api/auth/login'
+    window.location.href = "/api/auth/login"
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-500 to-purple-600">
-      <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full mx-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-black via-slate-950 to-black relative overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-950/30 via-slate-950/60 to-black"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-600/5 rounded-full blur-3xl animate-pulse"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl animate-pulse delay-1000"></div>
+
+      <div className="relative bg-slate-900/60 backdrop-blur-xl border border-slate-800/30 p-8 rounded-3xl shadow-2xl max-w-md w-full mx-4 ring-1 ring-white/5">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center mb-4">
-            <Link2 className="h-12 w-12 text-blue-600" />
+            <div className="p-3 bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl shadow-lg">
+              <Link2 className="h-8 w-8 text-white" />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">LinkVault</h1>
-          <p className="text-gray-600">
-            Your personal hub for organizing and accessing important links
-          </p>
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 to-blue-300 bg-clip-text text-transparent mb-2">
+            LinkVault
+          </h1>
+          <p className="text-slate-200">Your personal hub for organizing and accessing important links</p>
         </div>
 
         <div className="space-y-6">
           <button
             onClick={handleGoogleLogin}
-            className="w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg shadow-sm bg-white text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+            className="w-full flex items-center justify-center px-6 py-4 border border-slate-700/30 rounded-xl shadow-lg bg-slate-800/50 backdrop-blur-sm text-sm font-medium text-slate-100 hover:bg-slate-700/50 hover:border-slate-600/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-200 group"
           >
-            <svg className="w-5 h-5 mr-3" viewBox="0 0 24 24">
+            <svg className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform duration-200" viewBox="0 0 24 24">
               <path
                 fill="#4285F4"
                 d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
@@ -45,9 +53,7 @@ function Login() {
           </button>
 
           <div className="text-center">
-            <p className="text-sm text-gray-500">
-              Sign in to access your personal link vault
-            </p>
+            <p className="text-sm text-slate-300">Sign in to access your personal link vault</p>
           </div>
         </div>
       </div>
