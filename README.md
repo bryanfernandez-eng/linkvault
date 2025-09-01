@@ -1,5 +1,5 @@
 # Under Construction
-This project is a work in progress. Expect breaking changes and rough edges.
+This project is a work in progress.
 
 # 🔗 LinkVault
 
