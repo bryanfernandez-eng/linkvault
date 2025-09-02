@@ -52,26 +52,41 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
 
   const createMutation = useMutation({
     mutationFn: (data: CreateLinkData) => createLink(data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+    onSuccess: async () => {
+      // Multiple invalidation strategies to ensure it works
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
       onClose()
     },
+    onError: (error) => {
+      console.error("Create link error:", error)
+    }
   })
 
   const updateMutation = useMutation({
     mutationFn: (data: UpdateLinkData) => updateLink(link!.id, data),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+    onSuccess: async () => {
+      // Multiple invalidation strategies to ensure it works
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
       onClose()
     },
+    onError: (error) => {
+      console.error("Update link error:", error)
+    }
   })
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteLink(link!.id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+    onSuccess: async () => {
+      // Multiple invalidation strategies to ensure it works
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
       onClose()
     },
+    onError: (error) => {
+      console.error("Delete link error:", error)
+    }
   })
 
   const onSubmit = (data: CreateLinkData) => {
