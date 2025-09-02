@@ -46,6 +46,7 @@ class LinkBase(BaseModel):
     url: str
     description: Optional[str] = None
     is_pinned: Optional[bool] = False
+    favicon_url: Optional[str] = None  
 
 class LinkCreate(LinkBase):
     section_id: Optional[int] = None
@@ -62,6 +63,8 @@ class LinkUpdate(BaseModel):
     description: Optional[str] = None
     is_pinned: Optional[bool] = None
     section_id: Optional[int] = None
+    favicon_url: Optional[str] = None  # <-- ADD THIS LINE
+
     
     @validator('url')
     def validate_url(cls, v):

@@ -21,6 +21,7 @@ export interface Link {
   user_id: number;
   section_id?: number;
   created_at: string;
+  favicon_url?: string;  
 }
 
 export interface SectionWithLinks extends Section {
@@ -38,6 +39,7 @@ export interface CreateLinkData {
   description?: string;
   is_pinned?: boolean;
   section_id?: number;
+  favicon_url?: string;
 }
 
 export interface UpdateLinkData {
@@ -46,6 +48,7 @@ export interface UpdateLinkData {
   description?: string;
   is_pinned?: boolean;
   section_id?: number;
+  favicon_url?: string;  
 }
 
 export interface CreateSectionData {

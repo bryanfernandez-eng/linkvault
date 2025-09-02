@@ -5,7 +5,7 @@ import type React from "react"
 import { useState } from "react"
 import { useSortable } from "@dnd-kit/sortable"
 import { CSS } from "@dnd-kit/utilities"
-import { ChevronDown, ChevronRight, Settings, GripVertical, ExternalLink, Pin, Copy, Edit3 } from "lucide-react"
+import { ChevronDown, ChevronRight, Settings, GripVertical, ExternalLink, Pin, Copy, Edit3, Globe } from "lucide-react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import type { SectionWithLinks, Link } from "../types"
 import { deleteSection, updateLink } from "../services/api"
@@ -21,6 +21,7 @@ function SortableSection({ section, onEditLink, onEditSection, isDragging = fals
   const [isExpanded, setIsExpanded] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
   const [copiedLinkId, setCopiedLinkId] = useState<number | null>(null)
+  const [failedImages, setFailedImages] = useState<Set<number>>(new Set())
 
   const queryClient = useQueryClient()
 
@@ -80,6 +81,10 @@ function SortableSection({ section, onEditLink, onEditSection, isDragging = fals
   const handleEditClick = (link: Link, e: React.MouseEvent) => {
     e.stopPropagation()
     onEditLink(link)
+  }
+
+  const handleImageError = (linkId: number) => {
+    setFailedImages(prev => new Set([...prev, linkId]))
   }
 
   const canDelete = section.name !== "Uncategorized"
@@ -211,8 +216,18 @@ function SortableSection({ section, onEditLink, onEditSection, isDragging = fals
                   {/* Link Content */}
                   <div className="pr-8">
                     <div className="flex items-start gap-3 mb-3">
-                      <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0 border border-purple-500/30">
-                        <ExternalLink className="w-5 h-5 text-purple-300" />
+                      {/* Favicon or fallback icon */}
+                      <div className="w-10 h-10 bg-purple-500/20 rounded-lg flex items-center justify-center flex-shrink-0 border border-purple-500/30 overflow-hidden">
+                        {link.favicon_url && !failedImages.has(link.id) ? (
+                          <img
+                            src={link.favicon_url}
+                            alt=""
+                            className="w-6 h-6 object-contain"
+                            onError={() => handleImageError(link.id)}
+                          />
+                        ) : (
+                          <Globe className="w-5 h-5 text-purple-300" />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <h4 className="font-semibold text-slate-100 text-base leading-tight mb-1 group-hover:text-purple-300 transition-colors">

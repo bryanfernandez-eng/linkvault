@@ -1,23 +1,28 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useEffect } from "react"
-import { useForm } from "react-hook-form"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { X, Pin } from "lucide-react"
-import { createLink, updateLink, deleteLink } from "../services/api"
-import type { Link, SectionWithLinks, CreateLinkData, UpdateLinkData } from "../types"
+import { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { X, Pin } from "lucide-react";
+import { createLink, updateLink, deleteLink } from "../services/api";
+import type {
+  Link,
+  SectionWithLinks,
+  CreateLinkData,
+  UpdateLinkData,
+} from "../types";
 
 interface LinkModalProps {
-  link?: Link | null
-  sections: SectionWithLinks[]
-  onClose: () => void
+  link?: Link | null;
+  sections: SectionWithLinks[];
+  onClose: () => void;
 }
 
 function LinkModal({ link, sections, onClose }: LinkModalProps) {
-  const queryClient = useQueryClient()
-  const isEditing = !!link
+  const queryClient = useQueryClient();
+  const isEditing = !!link;
 
   const {
     register,
@@ -34,9 +39,9 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
       is_pinned: false,
       section_id: undefined,
     },
-  })
+  });
 
-  const isPinned = watch("is_pinned")
+  const isPinned = watch("is_pinned");
 
   useEffect(() => {
     if (link) {
@@ -46,68 +51,68 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
         description: link.description || "",
         is_pinned: link.is_pinned,
         section_id: link.section_id,
-      })
+      });
     }
-  }, [link, reset])
+  }, [link, reset]);
 
   const createMutation = useMutation({
     mutationFn: (data: CreateLinkData) => createLink(data),
     onSuccess: async () => {
       // Multiple invalidation strategies to ensure it works
-      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
-      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
-      onClose()
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+      onClose();
     },
     onError: (error) => {
-      console.error("Create link error:", error)
-    }
-  })
+      console.error("Create link error:", error);
+    },
+  });
 
   const updateMutation = useMutation({
     mutationFn: (data: UpdateLinkData) => updateLink(link!.id, data),
     onSuccess: async () => {
       // Multiple invalidation strategies to ensure it works
-      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
-      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
-      onClose()
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+      onClose();
     },
     onError: (error) => {
-      console.error("Update link error:", error)
-    }
-  })
+      console.error("Update link error:", error);
+    },
+  });
 
   const deleteMutation = useMutation({
     mutationFn: () => deleteLink(link!.id),
     onSuccess: async () => {
       // Multiple invalidation strategies to ensure it works
-      await queryClient.invalidateQueries({ queryKey: ["dashboard"] })
-      await queryClient.refetchQueries({ queryKey: ["dashboard"] })
-      onClose()
+      await queryClient.invalidateQueries({ queryKey: ["dashboard"] });
+      await queryClient.refetchQueries({ queryKey: ["dashboard"] });
+      onClose();
     },
     onError: (error) => {
-      console.error("Delete link error:", error)
-    }
-  })
+      console.error("Delete link error:", error);
+    },
+  });
 
   const onSubmit = (data: CreateLinkData) => {
     if (isEditing) {
-      updateMutation.mutate(data)
+      updateMutation.mutate(data);
     } else {
-      createMutation.mutate(data)
+      createMutation.mutate(data);
     }
-  }
+  };
 
   const handleDelete = () => {
     if (window.confirm("Delete this link?")) {
-      deleteMutation.mutate()
+      deleteMutation.mutate();
     }
-  }
+  };
 
   const handleBackdropClick = (e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
-      onClose()
+      onClose();
     }
-  }
+  };
 
   return (
     <div
@@ -116,29 +121,23 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
     >
       <div className="bg-slate-900/95 backdrop-blur-md border border-slate-700/50 rounded-lg shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-slate-700/50">
-          <h2 className="text-xl font-semibold text-slate-100">{isEditing ? "Edit Link" : "Add New Link"}</h2>
-          <button onClick={onClose} className="text-slate-400 hover:text-slate-200 transition-colors">
+          <h2 className="text-xl font-semibold text-slate-100">
+            {isEditing ? "Edit Link" : "Add New Link"}
+          </h2>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-200 transition-colors"
+          >
             <X className="h-6 w-6" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 space-y-4">
           <div>
-            <label htmlFor="title" className="block text-sm font-medium text-slate-300 mb-1">
-              Title *
-            </label>
-            <input
-              id="title"
-              type="text"
-              {...register("title", { required: "Title is required" })}
-              className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400"
-              placeholder="Link title"
-            />
-            {errors.title && <p className="text-red-400 text-sm mt-1">{errors.title.message}</p>}
-          </div>
-
-          <div>
-            <label htmlFor="url" className="block text-sm font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="url"
+              className="block text-sm font-medium text-slate-300 mb-1"
+            >
               URL *
             </label>
             <input
@@ -148,24 +147,62 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
               className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400"
               placeholder="https://example.com"
             />
-            {errors.url && <p className="text-red-400 text-sm mt-1">{errors.url.message}</p>}
+            {errors.url && (
+              <p className="text-red-400 text-sm mt-1">{errors.url.message}</p>
+            )}
+            <p className="text-xs text-slate-400 mt-1">
+              💡 Leave title empty to auto-fetch from website
+            </p>
           </div>
 
           <div>
-            <label htmlFor="description" className="block text-sm font-medium text-slate-300 mb-1">
-              Description
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-slate-300 mb-1"
+            >
+              Title{" "}
+              <span className="text-xs text-slate-400">
+                (optional - will auto-fill)
+              </span>
+            </label>
+            <input
+              id="title"
+              type="text"
+              {...register("title")}
+              className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400"
+              placeholder="Leave empty to auto-fetch title"
+            />
+            {errors.title && (
+              <p className="text-red-400 text-sm mt-1">
+                {errors.title.message}
+              </p>
+            )}
+          </div>
+
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-slate-300 mb-1"
+            >
+              Description{" "}
+              <span className="text-xs text-slate-400">
+                (optional - will auto-fill)
+              </span>
             </label>
             <textarea
               id="description"
               {...register("description")}
               rows={3}
               className="w-full px-3 py-2 bg-slate-800/50 border border-slate-600/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400 resize-none"
-              placeholder="Optional description"
+              placeholder="Leave empty to auto-fetch description"
             />
           </div>
 
           <div>
-            <label htmlFor="section" className="block text-sm font-medium text-slate-300 mb-1">
+            <label
+              htmlFor="section"
+              className="block text-sm font-medium text-slate-300 mb-1"
+            >
               Section
             </label>
             <select
@@ -177,7 +214,11 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
                 Select a section
               </option>
               {sections.map((section) => (
-                <option key={section.id} value={section.id} className="bg-slate-800 text-slate-100">
+                <option
+                  key={section.id}
+                  value={section.id}
+                  className="bg-slate-800 text-slate-100"
+                >
                   {section.name}
                 </option>
               ))}
@@ -191,8 +232,15 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
               {...register("is_pinned")}
               className="h-4 w-4 text-purple-600 focus:ring-purple-500 border-slate-600 rounded bg-slate-800/50"
             />
-            <label htmlFor="is_pinned" className="flex items-center gap-2 text-sm font-medium text-slate-300">
-              <Pin className={`h-4 w-4 ${isPinned ? "text-purple-400" : "text-slate-500"}`} />
+            <label
+              htmlFor="is_pinned"
+              className="flex items-center gap-2 text-sm font-medium text-slate-300"
+            >
+              <Pin
+                className={`h-4 w-4 ${
+                  isPinned ? "text-purple-400" : "text-slate-500"
+                }`}
+              />
               Pin to top
             </label>
           </div>
@@ -222,14 +270,18 @@ function LinkModal({ link, sections, onClose }: LinkModalProps) {
                 disabled={createMutation.isPending || updateMutation.isPending}
                 className="px-4 py-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 transition-all duration-200"
               >
-                {createMutation.isPending || updateMutation.isPending ? "Saving..." : isEditing ? "Update" : "Create"}
+                {createMutation.isPending || updateMutation.isPending
+                  ? "Saving..."
+                  : isEditing
+                  ? "Update"
+                  : "Create"}
               </button>
             </div>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-export default LinkModal
+export default LinkModal;

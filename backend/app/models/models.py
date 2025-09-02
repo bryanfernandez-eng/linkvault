@@ -37,6 +37,7 @@ class Link(Base):
     is_pinned = Column(Boolean, default=False)
     user_id = Column(Integer, ForeignKey("users.id"))
     section_id = Column(Integer, ForeignKey("sections.id"))
+    favicon_url = Column(String(500))  
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     user = relationship("User", back_populates="links")
