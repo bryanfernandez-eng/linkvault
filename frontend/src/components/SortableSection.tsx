@@ -14,20 +14,29 @@ interface SortableSectionProps {
   section: SectionWithLinks
   onEditLink: (link: Link) => void
   onEditSection: (section: SectionWithLinks) => void
+  isDragging?: boolean
 }
 
-function SortableSection({ section, onEditLink, onEditSection }: SortableSectionProps) {
+function SortableSection({ section, onEditLink, onEditSection, isDragging = false }: SortableSectionProps) {
   const [isExpanded, setIsExpanded] = useState(true)
   const [showMenu, setShowMenu] = useState(false)
   const [copiedLinkId, setCopiedLinkId] = useState<number | null>(null)
 
   const queryClient = useQueryClient()
 
-  const { attributes, listeners, setNodeRef, transform, transition } = useSortable({ id: section.id })
+  const { 
+    attributes, 
+    listeners, 
+    setNodeRef, 
+    transform, 
+    transition,
+    isDragging: isSortableDragging
+  } = useSortable({ id: section.id })
 
   const style = {
     transform: CSS.Transform.toString(transform),
-    transition,
+    transition: transition || "transform 200ms ease",
+    opacity: isDragging || isSortableDragging ? 0.5 : 1,
   }
 
   const deleteMutation = useMutation({
@@ -79,13 +88,15 @@ function SortableSection({ section, onEditLink, onEditSection }: SortableSection
     <div
       ref={setNodeRef}
       style={style}
-      className="bg-slate-900/60 backdrop-blur-sm rounded-xl shadow-lg border border-purple-500/20 overflow-hidden"
+      className={`bg-slate-900/60 backdrop-blur-sm rounded-xl shadow-lg border border-purple-500/20 overflow-hidden transition-all duration-200 ${
+        isDragging || isSortableDragging ? 'shadow-2xl border-purple-400/40 scale-105' : ''
+      }`}
     >
       {/* Section Header */}
       <div className="flex items-center justify-between p-5 border-b border-slate-700/50 bg-gradient-to-r from-slate-800/80 to-slate-900/80">
         <div className="flex items-center gap-3">
           <button
-            className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-300 p-1 rounded-md hover:bg-slate-700/50 transition-all"
+            className="cursor-grab active:cursor-grabbing text-slate-400 hover:text-slate-300 p-1 rounded-md hover:bg-slate-700/50 transition-all touch-none"
             {...attributes}
             {...listeners}
           >
