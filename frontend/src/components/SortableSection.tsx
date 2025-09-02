@@ -185,8 +185,8 @@ function SortableSection({ section, onEditLink, onEditSection, isDragging = fals
                     <Pin className={`h-3.5 w-3.5 ${link.is_pinned ? "fill-current" : ""}`} />
                   </button>
 
-                  {/* Quick Actions Toolbar - Appears on Hover */}
-                  <div className="absolute top-3 right-12 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
+                  {/* Quick Actions Toolbar - Always Visible */}
+                  <div className="absolute top-3 right-12 flex gap-1 transition-all duration-200">
                     <button
                       onClick={(e) => handleCopyLink(link, e)}
                       className={`p-1.5 rounded-md transition-all ${

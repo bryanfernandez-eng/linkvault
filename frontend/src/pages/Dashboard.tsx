@@ -136,47 +136,13 @@ function Dashboard() {
                   className="group relative bg-gradient-to-br from-slate-900/60 via-slate-800/40 to-slate-900/60 border-2 border-purple-500/20 rounded-xl p-6 hover:shadow-xl hover:border-purple-400/40 transition-all duration-300 cursor-pointer transform hover:scale-105 backdrop-blur-sm"
                   onClick={() => window.open(link.url, "_blank")}
                 >
-                  {/* Pin Badge */}
+                  {/* Pin Badge - Fixed Position */}
                   <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2 rounded-full shadow-lg">
                     <Pin className="h-4 w-4 fill-current" />
                   </div>
 
-                  {/* Quick Actions for Pinned Links */}
-                  <div className="absolute top-4 right-4 flex gap-1 opacity-0 group-hover:opacity-100 transition-all duration-200">
-                    <button
-                      onClick={(e) => handleTogglePin(link, e)}
-                      className="p-2 bg-purple-900/60 text-purple-300 hover:bg-purple-800/60 rounded-lg transition-all"
-                      title="Unpin link"
-                    >
-                      <Pin className="h-4 w-4 fill-current" />
-                    </button>
-
-                    <button
-                      onClick={(e) => handleCopyLink(link, e)}
-                      className={`p-2 rounded-lg transition-all ${
-                        copiedLinkId === link.id
-                          ? "bg-green-900/60 text-green-300"
-                          : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300"
-                      }`}
-                      title={copiedLinkId === link.id ? "Copied!" : "Copy link"}
-                    >
-                      <Copy className="h-4 w-4" />
-                    </button>
-
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation()
-                        handleEditLink(link)
-                      }}
-                      className="p-2 bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300 rounded-lg transition-all"
-                      title="Edit link"
-                    >
-                      <Edit3 className="h-4 w-4" />
-                    </button>
-                  </div>
-
                   {/* Link Content */}
-                  <div className="pr-8">
+                  <div className="mb-4">
                     <div className="flex items-start gap-4 mb-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-purple-900/60 to-indigo-900/60 rounded-xl flex items-center justify-center flex-shrink-0">
                         <Star className="w-6 h-6 text-purple-300" />
@@ -192,8 +158,45 @@ function Dashboard() {
                     </div>
 
                     {link.description && (
-                      <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed">{link.description}</p>
+                      <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed mb-4">{link.description}</p>
                     )}
+                  </div>
+
+                  {/* Action Buttons - Bottom of Card - Always Visible */}
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-700/30 transition-all duration-200">
+                    <button
+                      onClick={(e) => handleTogglePin(link, e)}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-purple-900/60 text-purple-300 hover:bg-purple-800/60 rounded-lg transition-all text-sm font-medium"
+                      title="Unpin link"
+                    >
+                      <Pin className="h-3.5 w-3.5 fill-current" />
+                      Unpin
+                    </button>
+
+                    <button
+                      onClick={(e) => handleCopyLink(link, e)}
+                      className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all text-sm font-medium ${
+                        copiedLinkId === link.id
+                          ? "bg-green-900/60 text-green-300"
+                          : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300"
+                      }`}
+                      title={copiedLinkId === link.id ? "Copied!" : "Copy link"}
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                      {copiedLinkId === link.id ? "Copied!" : "Copy"}
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleEditLink(link)
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300 rounded-lg transition-all text-sm font-medium"
+                      title="Edit link"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" />
+                      Edit
+                    </button>
                   </div>
 
                   {/* Premium Hover Effect */}
