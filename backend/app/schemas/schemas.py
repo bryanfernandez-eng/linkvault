@@ -1,18 +1,24 @@
-from pydantic import BaseModel, HttpUrl, validator
+from pydantic import BaseModel, HttpUrl, validator, EmailStr
 from typing import Optional, List
 from datetime import datetime
 
 # User Schemas
 class UserBase(BaseModel):
-    email: str
+    email: EmailStr
     name: str
 
 class UserCreate(UserBase):
-    google_id: str
+    google_id: Optional[str] = None
+    password: Optional[str] = None  # For email/password registration
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
 
 class User(UserBase):
     id: int
     created_at: datetime
+    is_active: bool
     
     class Config:
         from_attributes = True
@@ -63,9 +69,8 @@ class LinkUpdate(BaseModel):
     description: Optional[str] = None
     is_pinned: Optional[bool] = None
     section_id: Optional[int] = None
-    favicon_url: Optional[str] = None  # <-- ADD THIS LINE
+    favicon_url: Optional[str] = None
 
-    
     @validator('url')
     def validate_url(cls, v):
         if v and not v.startswith(('http://', 'https://')):

@@ -1,10 +1,77 @@
 "use client"
 
-import { Link2 } from "lucide-react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { useMutation } from "@tanstack/react-query"
+import { Link2, Eye, EyeOff } from "lucide-react"
+import { loginWithEmail, registerWithEmail } from "../services/api"
+
+interface LoginFormData {
+  email: string
+  password: string
+}
+
+interface RegisterFormData {
+  name: string
+  email: string
+  password: string
+}
 
 function Login() {
+  const [isRegister, setIsRegister] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
+
+  const {
+    register: registerForm,
+    handleSubmit,
+    formState: { errors },
+    reset,
+    setError
+  } = useForm<LoginFormData | RegisterFormData>()
+
+  const loginMutation = useMutation({
+    mutationFn: (data: LoginFormData) => loginWithEmail(data),
+    onSuccess: () => {
+      window.location.href = "/dashboard"
+    },
+    onError: (error: any) => {
+      setError("password", {
+        type: "manual",
+        message: error.response?.data?.detail || "Invalid email or password"
+      })
+    }
+  })
+
+  const registerMutation = useMutation({
+    mutationFn: (data: RegisterFormData) => registerWithEmail(data),
+    onSuccess: () => {
+      window.location.href = "/dashboard"
+    },
+    onError: (error: any) => {
+      const message = error.response?.data?.detail || "Registration failed"
+      if (message.includes("Email already registered")) {
+        setError("email", { type: "manual", message: "Email already registered" })
+      } else {
+        setError("password", { type: "manual", message })
+      }
+    }
+  })
+
   const handleGoogleLogin = () => {
     window.location.href = "/api/auth/login"
+  }
+
+  const onSubmit = (data: any) => {
+    if (isRegister) {
+      registerMutation.mutate(data as RegisterFormData)
+    } else {
+      loginMutation.mutate(data as LoginFormData)
+    }
+  }
+
+  const toggleMode = () => {
+    setIsRegister(!isRegister)
+    reset()
   }
 
   return (
@@ -23,10 +90,13 @@ function Login() {
           <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-300 to-blue-300 bg-clip-text text-transparent mb-2">
             LinkVault
           </h1>
-          <p className="text-slate-200">Your personal hub for organizing and accessing important links</p>
+          <p className="text-slate-200">
+            {isRegister ? "Create your account" : "Sign in to your account"}
+          </p>
         </div>
 
         <div className="space-y-6">
+          {/* Google OAuth */}
           <button
             onClick={handleGoogleLogin}
             className="w-full flex items-center justify-center px-6 py-4 border border-slate-700/30 rounded-xl shadow-lg bg-slate-800/50 backdrop-blur-sm text-sm font-medium text-slate-100 hover:bg-slate-700/50 hover:border-slate-600/40 focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-200 group"
@@ -52,8 +122,111 @@ function Login() {
             Continue with Google
           </button>
 
+          {/* Divider */}
+          <div className="relative">
+            <div className="absolute inset-0 flex items-center">
+              <div className="w-full border-t border-slate-700/50"></div>
+            </div>
+            <div className="relative flex justify-center text-sm">
+              <span className="px-4 bg-slate-900/60 text-slate-400">Or continue with email</span>
+            </div>
+          </div>
+
+          {/* Email/Password Form */}
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            {isRegister && (
+              <div>
+                <label htmlFor="name" className="block text-sm font-medium text-slate-300 mb-1">
+                  Full Name
+                </label>
+                <input
+                  id="name"
+                  type="text"
+                  {...registerForm("name", { required: "Name is required" })}
+                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400 transition-all"
+                  placeholder="Enter your full name"
+                />
+                {errors.name && (
+                  <p className="text-red-400 text-sm mt-1">{errors.name.message}</p>
+                )}
+              </div>
+            )}
+
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium text-slate-300 mb-1">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                {...registerForm("email", {
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Invalid email address"
+                  }
+                })}
+                className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400 transition-all"
+                placeholder="Enter your email"
+              />
+              {errors.email && (
+                <p className="text-red-400 text-sm mt-1">{errors.email.message}</p>
+              )}
+            </div>
+
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-300 mb-1">
+                Password
+              </label>
+              <div className="relative">
+                <input
+                  id="password"
+                  type={showPassword ? "text" : "password"}
+                  {...registerForm("password", {
+                    required: "Password is required",
+                    minLength: isRegister
+                      ? { value: 6, message: "Password must be at least 6 characters" }
+                      : undefined
+                  })}
+                  className="w-full px-3 py-3 bg-slate-800/50 border border-slate-700/50 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent text-slate-100 placeholder-slate-400 pr-10 transition-all"
+                  placeholder={isRegister ? "Create a password (6+ characters)" : "Enter your password"}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-slate-400 hover:text-slate-300 transition-colors"
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
+              {errors.password && (
+                <p className="text-red-400 text-sm mt-1">{errors.password.message}</p>
+              )}
+            </div>
+
+            <button
+              type="submit"
+              disabled={loginMutation.isPending || registerMutation.isPending}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white px-6 py-3 rounded-lg hover:from-purple-700 hover:to-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-purple-400/50 focus:ring-offset-2 focus:ring-offset-slate-900 transition-all duration-200 font-medium"
+            >
+              {loginMutation.isPending || registerMutation.isPending
+                ? (isRegister ? "Creating Account..." : "Signing In...")
+                : (isRegister ? "Create Account" : "Sign In")
+              }
+            </button>
+          </form>
+
+          {/* Toggle Register/Login */}
           <div className="text-center">
-            <p className="text-sm text-slate-300">Sign in to access your personal link vault</p>
+            <p className="text-sm text-slate-400">
+              {isRegister ? "Already have an account? " : "Don't have an account? "}
+              <button
+                onClick={toggleMode}
+                className="text-purple-400 hover:text-purple-300 font-medium transition-colors"
+              >
+                {isRegister ? "Sign In" : "Sign Up"}
+              </button>
+            </p>
           </div>
         </div>
       </div>

@@ -21,6 +21,13 @@ export const checkAuth = () => api.get<{authenticated: boolean, user_id: number}
 export const logout = () => api.post('/auth/logout');
 export const getCurrentUser = () => api.get<User>('/me');
 
+// New email/password auth
+export const registerWithEmail = (data: { name: string; email: string; password: string }) =>
+  api.post('/auth/register', data);
+
+export const loginWithEmail = (data: { email: string; password: string }) =>
+  api.post('/auth/login-email', data);
+
 // Dashboard
 export const getDashboard = () => api.get<DashboardData>('/links/dashboard');
 

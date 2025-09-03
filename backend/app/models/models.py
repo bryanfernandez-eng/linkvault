@@ -9,7 +9,9 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     email = Column(String, unique=True, index=True)
     name = Column(String)
-    google_id = Column(String, unique=True, index=True)
+    google_id = Column(String, unique=True, index=True, nullable=True)  # Now nullable
+    password_hash = Column(String, nullable=True)  # For email/password auth
+    is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     
     sections = relationship("Section", back_populates="user", cascade="all, delete-orphan")
