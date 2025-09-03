@@ -32,6 +32,8 @@ function Dashboard() {
   const [editingLink, setEditingLink] = useState<any>(null);
   const [editingSection, setEditingSection] = useState<any>(null);
   const [copiedLinkId, setCopiedLinkId] = useState<number | null>(null);
+  // Move failed favicons state to component level
+  const [failedFavicons, setFailedFavicons] = useState<Set<number>>(new Set());
 
   const queryClient = useQueryClient();
 
@@ -111,6 +113,10 @@ function Dashboard() {
     setEditingSection(null);
   };
 
+  const handleFaviconError = (linkId: number) => {
+    setFailedFavicons(prev => new Set([...prev, linkId]));
+  };
+
   return (
     <div className="min-h-screen bg-black">
       <Header onLogout={() => logoutMutation.mutate()} />
@@ -148,99 +154,95 @@ function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
-              {dashboardData.pinned_links.map((link) => {
-                const [failedFavicon, setFailedFavicon] = useState(false);
-
-                return (
-                  <div
-                    key={link.id}
-                    className="group relative bg-gradient-to-br from-slate-900/60 via-slate-800/40 to-slate-900/60 border-2 border-purple-500/20 rounded-xl p-6 hover:shadow-xl hover:border-purple-400/40 transition-all duration-300 cursor-pointer transform hover:scale-105 backdrop-blur-sm"
-                    onClick={() => window.open(link.url, "_blank")}
-                  >
-                    {/* Pin Badge - Fixed Position */}
-                    <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2 rounded-full shadow-lg">
-                      <Pin className="h-4 w-4 fill-current" />
-                    </div>
-
-                    {/* Link Content */}
-                    <div className="mb-4">
-                      <div className="flex items-start gap-4 mb-4">
-                        {/* Enhanced favicon display */}
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-900/60 to-indigo-900/60 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden border border-purple-500/30">
-                          {link.favicon_url && !failedFavicon ? (
-                            <img
-                              src={link.favicon_url}
-                              alt=""
-                              className="w-8 h-8 object-contain"
-                              onError={() => setFailedFavicon(true)}
-                            />
-                          ) : (
-                            <Star className="w-6 h-6 text-purple-300" />
-                          )}
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          <h3 className="font-bold text-slate-100 text-lg leading-tight mb-2 group-hover:text-purple-300 transition-colors">
-                            {link.title}
-                          </h3>
-                          <p className="text-purple-300 text-sm font-medium truncate bg-purple-900/40 px-2 py-1 rounded-md inline-block">
-                            {link.url
-                              .replace(/^https?:\/\//, "")
-                              .replace(/^www\./, "")}
-                          </p>
-                        </div>
-                      </div>
-
-                      {link.description && (
-                        <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed mb-4">
-                          {link.description}
-                        </p>
-                      )}
-                    </div>
-
-                    {/* Action Buttons - Bottom of Card - Always Visible */}
-                    <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-700/30 transition-all duration-200">
-                      <button
-                        onClick={(e) => handleTogglePin(link, e)}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-purple-900/60 text-purple-300 hover:bg-purple-800/60 rounded-lg transition-all text-sm font-medium"
-                        title="Unpin link"
-                      >
-                        <Pin className="h-3.5 w-3.5 fill-current" />
-                        Unpin
-                      </button>
-
-                      <button
-                        onClick={(e) => handleCopyLink(link, e)}
-                        className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all text-sm font-medium ${
-                          copiedLinkId === link.id
-                            ? "bg-green-900/60 text-green-300"
-                            : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300"
-                        }`}
-                        title={
-                          copiedLinkId === link.id ? "Copied!" : "Copy link"
-                        }
-                      >
-                        <Copy className="h-3.5 w-3.5" />
-                        {copiedLinkId === link.id ? "Copied!" : "Copy"}
-                      </button>
-
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          handleEditLink(link);
-                        }}
-                        className="flex items-center gap-1 px-3 py-1.5 bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300 rounded-lg transition-all text-sm font-medium"
-                        title="Edit link"
-                      >
-                        <Edit3 className="h-3.5 w-3.5" />
-                        Edit
-                      </button>
-                    </div>
-
-                    {/* Premium Hover Effect */}
-                    <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+              {dashboardData.pinned_links.map((link) => (
+                <div
+                  key={link.id}
+                  className="group relative bg-gradient-to-br from-slate-900/60 via-slate-800/40 to-slate-900/60 border-2 border-purple-500/20 rounded-xl p-6 hover:shadow-xl hover:border-purple-400/40 transition-all duration-300 cursor-pointer transform hover:scale-105 backdrop-blur-sm"
+                  onClick={() => window.open(link.url, "_blank")}
+                >
+                  {/* Pin Badge - Fixed Position */}
+                  <div className="absolute -top-2 -right-2 bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-2 rounded-full shadow-lg">
+                    <Pin className="h-4 w-4 fill-current" />
                   </div>
-                );
-              })}
+
+                  {/* Link Content */}
+                  <div className="mb-4">
+                    <div className="flex items-start gap-4 mb-4">
+                      {/* Enhanced favicon display */}
+                      <div className="w-12 h-12 bg-gradient-to-br from-purple-900/60 to-indigo-900/60 rounded-xl flex items-center justify-center flex-shrink-0 overflow-hidden border border-purple-500/30">
+                        {link.favicon_url && !failedFavicons.has(link.id) ? (
+                          <img
+                            src={link.favicon_url}
+                            alt=""
+                            className="w-8 h-8 object-contain"
+                            onError={() => handleFaviconError(link.id)}
+                          />
+                        ) : (
+                          <Star className="w-6 h-6 text-purple-300" />
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-bold text-slate-100 text-lg leading-tight mb-2 group-hover:text-purple-300 transition-colors">
+                          {link.title}
+                        </h3>
+                        <p className="text-purple-300 text-sm font-medium truncate bg-purple-900/40 px-2 py-1 rounded-md inline-block">
+                          {link.url
+                            .replace(/^https?:\/\//, "")
+                            .replace(/^www\./, "")}
+                        </p>
+                      </div>
+                    </div>
+
+                    {link.description && (
+                      <p className="text-slate-400 text-sm line-clamp-2 leading-relaxed mb-4">
+                        {link.description}
+                      </p>
+                    )}
+                  </div>
+
+                  {/* Action Buttons - Bottom of Card - Always Visible */}
+                  <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-700/30 transition-all duration-200">
+                    <button
+                      onClick={(e) => handleTogglePin(link, e)}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-purple-900/60 text-purple-300 hover:bg-purple-800/60 rounded-lg transition-all text-sm font-medium"
+                      title="Unpin link"
+                    >
+                      <Pin className="h-3.5 w-3.5 fill-current" />
+                      Unpin
+                    </button>
+
+                    <button
+                      onClick={(e) => handleCopyLink(link, e)}
+                      className={`flex items-center gap-1 px-3 py-1.5 rounded-lg transition-all text-sm font-medium ${
+                        copiedLinkId === link.id
+                          ? "bg-green-900/60 text-green-300"
+                          : "bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300"
+                      }`}
+                      title={
+                        copiedLinkId === link.id ? "Copied!" : "Copy link"
+                      }
+                    >
+                      <Copy className="h-3.5 w-3.5" />
+                      {copiedLinkId === link.id ? "Copied!" : "Copy"}
+                    </button>
+
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleEditLink(link);
+                      }}
+                      className="flex items-center gap-1 px-3 py-1.5 bg-slate-800/60 text-slate-400 hover:bg-slate-700/60 hover:text-slate-300 rounded-lg transition-all text-sm font-medium"
+                      title="Edit link"
+                    >
+                      <Edit3 className="h-3.5 w-3.5" />
+                      Edit
+                    </button>
+                  </div>
+
+                  {/* Premium Hover Effect */}
+                  <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-purple-600/10 to-indigo-600/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none" />
+                </div>
+              ))}
             </div>
           </div>
         )}
